@@ -1,0 +1,45 @@
+<div class="background-color w-full flex flex-column justify-between items-center rounded-lg mb-5 py-4 px-3 ">
+    <h1>Quản lý danh mục</h1>
+    <a class="btn" href="category/insert">Thêm mới</a>
+</div>
+
+<div class="relative overflow-x-auto rounded-lg">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="px-6 py-3">
+                Hình ảnh
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Tên danh mục
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Số sản phẩm
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Trạng thái
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Thao tác
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if(locals.categories.length > 0){ %>
+
+            <% categories.forEach( (item, index)  => { %>
+                <%- include('../../components/categoryRow', { item: item, index: index }) %>
+            <% }); %>
+        <% }else { %>
+            <tr class="w-full justify-center items-center bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="text-base w-full text-center p-3 italic font-medium text-gray-900 dark:text-white">Không
+                    có danh mục nào
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+
+
+</div>

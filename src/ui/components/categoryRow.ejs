@@ -1,0 +1,23 @@
+<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+    <th scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <img src="<%= item.imageUrl %>"
+             class="w-16 rounded-lg md:w-32 max-w-[50px] max-h-[50px] md:max-w-[65px] md:max-h-[65px] object-cover object-center"
+             alt="Image Url">
+    </th>
+    <td class="px-6 py-2">
+        <% if (item.categoryName.length > 8 && !item.categoryName.includes(' ')) { %>
+            <%= item.categoryName.substring(0, 8) + '...' %>
+        <% } else { %>
+            <%= item.categoryName %>
+        <% } %>
+    </td>
+    <td class="px-6 py-2">
+        <%= item.productsCount %> Sản phẩm
+    </td>
+    <td class="px-6 py-2">
+        <%= item.status ? "Kích hoạt" : "Chờ kích hoạt" %>
+    </td>
+    <td class="px-6 py-2 text-lg">
+        Chi tiết
+    </td>
+</tr>
