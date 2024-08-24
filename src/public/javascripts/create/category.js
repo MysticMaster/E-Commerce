@@ -24,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let hasError = false;
 
-        console.log(`name: ${categoryName} image: ${categoryImage}`);
-
         if (!categoryName) {
             categoryNameError.textContent = 'Tên danh mục không được để trống.';
             hasError = true;
@@ -55,23 +53,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             switch (statusCode) {
                 case 201:
-                    window.location.href = '/category/201';
+                    window.location.href = '/category/status/201';
                     break;
                 case 400:
-                    window.location.href = '/category/400';
+                    window.location.href = '/category/status400';
                     break;
                 case 409:
                     document.getElementById('category_name_error').textContent = 'Tên danh mục đã tồn tại.';
                     break;
                 case 500:
-                    window.location.href = '/category/500';
+                    window.location.href = '/category/status/500';
                     break;
                 default:
                     console.error('Unhandled status code:', statusCode);
                     break;
             }
         } catch (error) {
-            window.location.href = '/category/500';
+            window.location.href = '/category/status/500';
         } finally {
             if (statusCode !== 409) {
                 form.reset();

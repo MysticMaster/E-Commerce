@@ -10,8 +10,10 @@ const ProductVariantSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    imageKey:[String],
-    imageUrl:[String],
+    imageKey: [String],
+    imageData: {type: [mongoose.Schema.Types.Mixed]},
+    videoKey: [String],
+    videoData: {type: [mongoose.Schema.Types.Mixed]},
     price:{
         type: Number,
         required: true,
@@ -30,6 +32,10 @@ const ProductVariantSchema = new mongoose.Schema({
     status:{
         type: Boolean,
         default: true
+    },
+    createdAt:{
+        type: Date,
+        default: Date.now
     }
 });
 

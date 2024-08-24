@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import AdminModel from "../models/adminModel.js";
+import AdminModel from "../../models/adminModel.js";
+import {createToken} from "../../middlewares/authMiddleware.js";
 
 dotenv.config();
 
@@ -18,12 +18,8 @@ const handleErrors = (err) => {
     return e;
 }
 
-const maxAge = 1000 * 60 * 60 * 2;
-const createToken = id => {
-    return jwt.sign({id}, process.env.SECRET_KEY, {
-        expiresIn: maxAge,
-    });
-}
+const maxAgeInSeconds = 2 * 60 * 60;
+const maxAgeInMilliseconds = maxAgeInSeconds * 1000;
 
 const getLoginPage = (req, res) => {
     res.render('pages/login');
@@ -34,9 +30,9 @@ const postLogin = async (req, res) => {
         const {username, password} = req.body;
 
         const admin = await AdminModel.login(username, password);
-        const token = createToken(admin._id);
+        const token = await createToken(admin,maxAgeInSeconds);
 
-        res.cookie('authenticated', token, {httpOnly: true, secure: false, maxAge: maxAge});
+        res.cookie('authenticated', token, {httpOnly: true, secure: false, maxAge: maxAgeInMilliseconds});
         res.json({status: 200, e: null});
     } catch (error) {
         const errors = handleErrors(error);
@@ -70,4 +66,4 @@ export default {
     postLogin,
     postSignup,
     getLogout
-}
+};

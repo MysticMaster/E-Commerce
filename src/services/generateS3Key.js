@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-const randomImageName = (bytes = 32) =>
+const randomS3Key = (bytes = 18) =>
     crypto.randomBytes(bytes).toString("hex");
 
-export default randomImageName;
+export default randomS3Key;

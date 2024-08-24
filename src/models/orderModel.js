@@ -8,12 +8,12 @@ const OrderItemSchema = new mongoose.Schema({
 });
 
 const OrderSchema = new mongoose.Schema({
+    orderId: { type: String, unique: true , required: true },
     buyerId: {type: String, required: true},
     vendorId: {type: String, required: true},
     shippingAddress: {type: String, required: true},
     deliveryPhoneNumber: {type: String, required: true},
     deliveryEmail: String,
-    billingStatus: {type: String, required: true},
     discount: {type: Number, required: false, default: 0},
     totalPrice: {type: Number, required: true},
     totalQuantity: {type: Number, required: true},
@@ -28,7 +28,9 @@ const OrderSchema = new mongoose.Schema({
     orderRefusedAt: Date,
     orderStatus: {type: Number, default: 0,},
     status: {type: Boolean, default: true,},
-    createAt: {type: Date, default: Date.now,}
-});
+    createdAt: {type: Date, default: Date.now,}
+}, {_id: false});
+
+OrderSchema.index({ orderId: 1 });
 
 export default mongoose.model('Order', OrderSchema);

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import PrivateAttributeSchema  from "./privateAttributeModel.js";
+import PrivateAttributeSchema from "./privateAttributeModel.js";
 
 const ProductSchema = new mongoose.Schema({
     categoryId: {
@@ -15,7 +15,7 @@ const ProductSchema = new mongoose.Schema({
         required: true,
     },
     imageKey: [String],
-    imageUrl: [String],
+    videoKey: [String],
     approved: {
         type: Boolean,
         default: false,
@@ -45,6 +45,10 @@ const ProductSchema = new mongoose.Schema({
     status: {
         type: Boolean,
         default: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 

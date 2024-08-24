@@ -85,6 +85,14 @@ body.dark .activity-data::-webkit-scrollbar-thumb:hover {
     background-color: var(--panel-color);
 }
 
+.btn-disabled {
+    background-color: #d1d5db;
+    cursor: not-allowed;
+}
+.btn-enabled {
+    background-color: #3b82f6;
+}
+
 /* === Custom Nav Bar CSS === */
 nav {
     position: fixed;
@@ -470,7 +478,7 @@ nav.close ~ .m-container .top {
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
     nav {
         width: 73px;
     }

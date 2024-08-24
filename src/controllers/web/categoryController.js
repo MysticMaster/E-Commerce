@@ -1,14 +1,11 @@
 import Category from "../../models/categoryModel.js";
 import Product from "../../models/productModel.js";
-import {GetObjectCommand, PutObjectCommand} from "@aws-sdk/client-s3";
-import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
-import s3 from "../../config/s3.js";
 import sharp from "sharp";
 import dotenv from "dotenv";
-import generateImageName from "../../services/generateImageName.js";
+import {uploadMedia, getMedia, deleteMedia} from "../../services/s3Function.js";
 
 dotenv.config();
-const bucketName = process.env.BUCKET_NAME;
+const maxAge = 360;
 
 const getCategoryPage = async (req, res) => {
     const sizePage = +req.query.size || 5;
@@ -29,13 +26,7 @@ const getCategoryPage = async (req, res) => {
             };
 
             if (categoryWithCount.imageKey) {
-                const getObjectParams = {
-                    Bucket: bucketName,
-                    Key: categoryWithCount.imageKey,
-                };
-
-                const command = new GetObjectCommand(getObjectParams);
-                categoryWithCount.imageUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
+                categoryWithCount.imageUrl = await getMedia(categoryWithCount.imageKey, maxAge);
             }
 
             categoryWithCount.productsCount = await Product.countDocuments({idCategory: categoryWithCount._id});
@@ -43,9 +34,9 @@ const getCategoryPage = async (req, res) => {
             return categoryWithCount;
         }));
 
-       // for (const category of categoriesWithCounts) {
-       //     console.log(`category: ${JSON.stringify(category, null, 2)}`);
-       // }
+        // for (const category of categoriesWithCounts) {
+        //     console.log(`category: ${JSON.stringify(category, null, 2)}`);
+        // }
 
         res.render('pages/main', {
             title: 'Quản lý danh mục',
@@ -100,17 +91,7 @@ const postAddCategory = async (req, res) => {
                     .resize({height: 650, width: 650, fit: "cover"})
                     .toBuffer();
 
-                imageKey = generateImageName();
-
-                const params = {
-                    Bucket: bucketName,
-                    Key: imageKey,
-                    Body: buffer,
-                    ContentType: req.file.mimetype,
-                };
-
-                const command = new PutObjectCommand(params);
-                await s3.send(command);
+                imageKey = await uploadMedia(req.file, buffer);
             } catch (error) {
                 console.log("ERROR upload file: ", error);
                 imageKey = "";
@@ -126,6 +107,93 @@ const postAddCategory = async (req, res) => {
     } catch (error) {
         console.log(`getCategoryPage ${error}`)
         res.json({status: 500})
+    }
+}
+
+const getCategoryDetail = async (req, res) => {
+    try {
+        const category = await Category.findOne({_id: req.params.id});
+        if (!category) {
+            return res.redirect('/category/404')
+        }
+
+        const categoryData = {
+            ...category.toObject(),
+            products: []
+        };
+
+        if (categoryData.imageKey) {
+            categoryData.imageUrl = await getMedia(categoryData.imageKey, maxAge);
+        }
+
+        categoryData.products = await Product.find({categoryId: categoryData._id})
+
+        res.render('pages/main', {
+            title: `${categoryData.categoryName}`,
+            display: 'categoryDetail',
+            category: categoryData,
+            active: 'category'
+        });
+
+    } catch (error) {
+        console.log(`getCategoryDetail ${error}`)
+        res.redirect('/category/500')
+    }
+}
+
+const putUpdateCategory = async (req, res) => {
+    try {
+        if (!req.body) {
+            return res.json({status: 400});
+        }
+
+        const category = await Category.findOne({_id: req.params.id});
+        if (!category) {
+            return res.redirect('/category/404')
+        }
+
+        const {categoryName, status} = req.body;
+        let imageKey = "";
+
+        console.log(`name: ${categoryName} status: ${status}`);
+        // console.log(`file: ${req.file}`)
+
+        const existingCategory = await Category.findOne({
+            categoryName: new RegExp(`^${categoryName}$`, 'i')
+        });
+
+        if (existingCategory && existingCategory.categoryName !== categoryName) {
+            return res.json({status: 409});
+        }
+
+        if (req.file) {
+            try {
+                const buffer = await sharp(req.file.buffer)
+                    .resize({height: 650, width: 650, fit: "cover"})
+                    .toBuffer();
+
+                imageKey = await uploadMedia(req.file, buffer);
+
+                if (category.imageKey) {
+                    await deleteMedia(categoryName.imageKey)
+                }
+            } catch (error) {
+                console.log("ERROR upload file: ", error);
+                imageKey = "";
+            }
+        }
+
+        await Category.findOneAndUpdate(
+            {_id: category._id},
+            {
+                categoryName: categoryName,
+                imageKey: imageKey || category.imageKey,
+                status: JSON.parse(status)
+            }, {new: true});
+        res.json({status: 200})
+    } catch (error) {
+        console.log(`putUpdateCategory ${error}`)
+        res.redirect('/category/500')
     }
 }
 
@@ -147,6 +215,15 @@ const add400 = (req, res) => {
     });
 }
 
+const categoryNotFound = (req, res) => {
+    res.render('pages/notification', {
+        code: 404,
+        route: "category",
+        title: "Lỗi dữ liệu",
+        message: "Danh mục không tồn tại"
+    });
+}
+
 const serverError = (req, res) => {
     res.render('pages/notification', {
         code: 500,
@@ -160,7 +237,10 @@ export default {
     getCategoryPage,
     getAddCategoryPage,
     postAddCategory,
+    getCategoryDetail,
+    putUpdateCategory,
     addSuccess,
     add400,
+    categoryNotFound,
     serverError
 }

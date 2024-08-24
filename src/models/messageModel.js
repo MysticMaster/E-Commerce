@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 
 const MessageSchema = new mongoose.Schema({
-    chatRoomId:{
-        type:String,
-        required: true,
-    },
-    senderId:{
+    chatRoomId: {
         type: String,
         required: true,
     },
-    content:{
+    senderId: {
         type: String,
-        required:true,
+        required: true,
     },
-    createAt: {
+    imageKey: [String],
+    videoKey: [String],
+    content: String,
+    createdAt: {
         type: Date,
         default: Date.now
     }

@@ -1,26 +1,31 @@
 import createError from 'http-errors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 import logger from 'morgan';
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import configViewEngine from "./config/viewEngine.js";
 import staticFile from "./config/staticFile.js";
-import web from "./routes/web.js";
-import auth from "./routes/auth.js";
-import authMiddleware from "./middlewares/authMiddleware.js";
-import authController from "./controllers/authController.js";
+import web from "./routes/web/adminRoute.js";
+import auth from "./routes/auth/authRoute.js";
+import vendor from "./routes/api/vendorRoute.js";
+import {adminAuthentication, authentication} from "./middlewares/authMiddleware.js";
+import formatDateTime from "./services/formatDateTime.js";
 
 const app = express();
 dotenv.config();
 
 configViewEngine(app);
-staticFile(app);
+staticFile(app)
+app.locals.formatDateTime = formatDateTime;
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const connect = async () => {
     try {
@@ -33,7 +38,8 @@ const connect = async () => {
 connect();
 
 app.use('/auth', auth);
-app.use('/', authMiddleware.requireAuthentication, web);
+app.use('/api/v1/vendor', authentication('vendor'), vendor);
+app.use('/', adminAuthentication, web);
 
 
 app.use(function (req, res, next) {

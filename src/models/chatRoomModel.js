@@ -1,8 +1,12 @@
 import mongoose from 'mongoose';
 
 const ChatRoomSchema = new mongoose.Schema({
-    members: Array,
-    createAt: {
+    members: [String],
+    status: {
+        type: Boolean,
+        default: true
+    },
+    createdAt: {
         type: Date,
         default: Date.now
     }

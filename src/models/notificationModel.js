@@ -5,7 +5,7 @@ const NotificationSchema = new mongoose.Schema({
     orderId: String,
     title: {type: String, required: true},
     content: {type: String, required: true},
-    createAt: {type: Date, default: Date.now},
+    createdAt: {type: Date, default: Date.now},
 });
 
 export const NotificationModel = mongoose.model('Notification', NotificationSchema);

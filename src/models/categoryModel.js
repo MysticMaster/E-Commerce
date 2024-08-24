@@ -7,12 +7,11 @@ const CategorySchema = new mongoose.Schema({
         required: true,
     },
     imageKey: String,
-    imageUrl: String,
     status: {
         type: Boolean,
         default: true,
     },
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     }

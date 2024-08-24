@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const BuyerSchema = new mongoose.Schema({
-    fullName: {
-        type: String,
-        required: true
+    userId:{
+      type: String,
+      required: true,
     },
-    email: {
+    fullName: {
         type: String,
         required: true
     },
@@ -14,13 +14,18 @@ const BuyerSchema = new mongoose.Schema({
     placeName: String,
     telephone: String,
     imageKey: String,
-    imageUrl: String,
+    role:{
+        type: String,
+        default: 'buyer',
+    },
     status: {
         type: Boolean,
         default: true,
     },
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now
     }
-})
+});
+
+export default mongoose.model('Buyer', BuyerSchema);
