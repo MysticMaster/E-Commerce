@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('category-form');
     const categoryNameInput = form.querySelector('input[name="categoryName"]');
-    const categoryImageInput = form.querySelector('input[name="image"]');
+    const categoryImageInput = form.querySelector('input[name="file"]');
     const categoryNameError = document.getElementById('category_name_error');
     const categoryImageError = document.getElementById('category_image_error');
 
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let statusCode;
 
         try {
-            const response = await axios.post('/category', formData, {
+            const response = await axios.post('/categories', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -53,28 +53,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
             switch (statusCode) {
                 case 201:
-                    window.location.href = '/category/status/201';
+                    window.location.href = '/categories/status/201';
                     break;
                 case 400:
-                    window.location.href = '/category/status400';
+                    window.location.href = '/categories/status400';
                     break;
                 case 409:
                     document.getElementById('category_name_error').textContent = 'Tên danh mục đã tồn tại.';
                     break;
                 case 500:
-                    window.location.href = '/category/status/500';
+                    window.location.href = '/categories/status/500';
                     break;
                 default:
                     console.error('Unhandled status code:', statusCode);
                     break;
             }
         } catch (error) {
-            window.location.href = '/category/status/500';
+            window.location.href = '/categories/status/500';
         } finally {
             if (statusCode !== 409) {
                 form.reset();
             }
         }
-
     });
 });

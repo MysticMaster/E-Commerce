@@ -10,14 +10,14 @@ const upload = multer({storage: storage});
 
 router.get('/', homeController);
 
-router.get('/category', categoryController.getCategoryPage);
-router.get('/category/insert', categoryController.getAddCategoryPage);
-router.post('/category', upload.single("image"), categoryController.postAddCategory);
-router.get('/category/:id', categoryController.getCategoryDetail);
-router.put('/category/:id', upload.single("image"), categoryController.putUpdateCategory);
-router.get('/category/status/201', categoryController.addSuccess);
-router.get('/category/status/400', categoryController.add400);
-router.get('/category/status/404', categoryController.categoryNotFound);
-router.get('/category/status/500', categoryController.serverError);
+router.get('/categories', categoryController.getCategoryPage);
+router.get('/categories/new', categoryController.getAddCategoryPage);
+router.post('/categories', upload.single("file"), categoryController.postAddCategory);
+router.get('/categories/:id', categoryController.getCategoryDetail);
+router.put('/categories/:id', upload.single("file"), categoryController.patchUpdateCategory);
+router.get('/categories/status/201', categoryController.addSuccess);
+router.get('/categories/status/400', categoryController.add400);
+router.get('/categories/status/404', categoryController.categoryNotFound);
+router.get('/categories/status/500', categoryController.serverError);
 
 export default router;

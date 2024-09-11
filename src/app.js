@@ -10,6 +10,7 @@ import staticFile from "./config/staticFile.js";
 import web from "./routes/web/adminRoute.js";
 import auth from "./routes/auth/authRoute.js";
 import vendor from "./routes/api/vendorRoute.js";
+import buyer from "./routes/api/buyerRoute.js";
 import {adminAuthentication, authentication} from "./middlewares/authMiddleware.js";
 import formatDateTime from "./services/formatDateTime.js";
 
@@ -24,7 +25,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 const connect = async () => {
@@ -38,7 +39,8 @@ const connect = async () => {
 connect();
 
 app.use('/auth', auth);
-app.use('/api/v1/vendor', authentication('vendor'), vendor);
+app.use('/api/v1/vendors', authentication('vendor'), vendor);
+app.use('/api/v1/buyers', authentication('buyer'), buyer);
 app.use('/', adminAuthentication, web);
 
 

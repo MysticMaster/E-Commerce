@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
-import AdminModel from "../../models/adminModel.js";
+import AdminModel from "../../schemas/adminSchema.js";
 import {createToken} from "../../middlewares/authMiddleware.js";
+import {HTTPResponse} from "../../services/HTTPResponse.js";
 
 dotenv.config();
 
@@ -27,6 +28,10 @@ const getLoginPage = (req, res) => {
 
 const postLogin = async (req, res) => {
     try {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json(HTTPResponse(400, {}, 'Invalid data'));
+        }
+
         const {username, password} = req.body;
 
         const admin = await AdminModel.login(username, password);
@@ -42,6 +47,10 @@ const postLogin = async (req, res) => {
 
 const postSignup = async (req, res) => {
     try {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json(HTTPResponse(400, {}, 'Invalid data'));
+        }
+
         const {username, password, email} = req.body;
 
         await AdminModel.create({
@@ -56,14 +65,14 @@ const postSignup = async (req, res) => {
     }
 }
 
-const getLogout = async (req, res) => {
-    res.cookie('authenticated', '', {maxAge: 1});
-    res.redirect('/login');
-}
+const deleteLogout = async (req, res) => {
+    res.cookie('authenticated', '', { maxAge: 1 });
+    res.status(204).send();
+};
 
 export default {
     getLoginPage,
     postLogin,
     postSignup,
-    getLogout
+    deleteLogout
 };

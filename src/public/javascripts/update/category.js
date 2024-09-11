@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = form.querySelector('button[type="submit"]');
     const inputs = form.querySelectorAll('input');
     const radioButtons = form.querySelectorAll('input[name="status"]');
-    
+
     const checkForChanges = () => {
         let hasChanges = false;
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let statusCode;
 
         try {
-            const response = await axios.put(`/category/${id.value}`, formData, {
+            const response = await axios.put(`/categories/${id.value}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -75,20 +75,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.reload();
                     break;
                 case 400:
-                    window.location.href = '/category/400';
+                    window.location.href = '/categories/400';
+                    break;
+                case 408:
+                    alert("Tồn tại sản phẩm đang giao bán, không thể hủy kích hoạt");
                     break;
                 case 409:
                     categoryNameError.textContent = 'Tên danh mục đã tồn tại.';
                     break;
                 case 500:
-                    window.location.href = '/category/500';
+                    window.location.href = '/categories/500';
                     break;
                 default:
                     console.error('Unhandled status code:', statusCode);
                     break;
             }
         } catch (error) {
-            window.location.href = '/category/500';
+            window.location.href = '/categories/500';
         } finally {
             if (statusCode !== 409) {
                 form.reset();

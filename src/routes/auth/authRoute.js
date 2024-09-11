@@ -8,16 +8,14 @@ const router = express.Router();
 router.get('/', adminController.getLoginPage);
 router.post('/login', adminController.postLogin);
 router.post('/signup', adminController.postSignup);
-router.get('/logout', adminController.getLogout);
+router.delete('/logout', adminController.deleteLogout);
 
-router.post('/buyer/login', buyerController.postLogin);
-router.post('/buyer/login-verify', buyerController.postVerifyLoginOTP);
-router.post('/buyer/signup', buyerController.postSignup);
-router.post('/buyer/signup-verify', buyerController.postVerifySignupOTP);
+router.post('/buyers/login', buyerController.postLogin);
+router.post('/buyers/signup', buyerController.postSignup);
+router.post('/buyers/verify', buyerController.postVerifyOTP);
 
-router.post('/vendor/login', vendorController.postLogin);
-router.post('/vendor/login-verify', vendorController.postVerifyLoginOTP);
-router.post('/vendor/signup', vendorController.postSignup);
-router.post('/vendor/signup-verify', vendorController.postVerifySignupOTP);
+router.post('/vendors/login', vendorController.postLogin);
+router.post('/vendors/signup', vendorController.postSignup);
+router.post('/vendors/verify', vendorController.postVerifyOTP);
 
 export default router;
